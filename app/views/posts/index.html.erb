@@ -1,0 +1,78 @@
+<div class="container p-5 w-50">
+  <div class="row w-70">
+    <form action="/posts" accept-charset="UTF-8" method="post">
+      <input type="hidden" name="authenticity_token" value="...">
+      <div class="form-outline mb-4">
+        <input type="text" id="form4Example2" name="title" placeholder="Title" class="form-control" />
+      </div>
+
+      <!-- Message input -->
+      <div class="form-outline mb-4">
+        <textarea class="form-control" id="form4Example3" name="content" placeholder="Content" rows="4"></textarea>
+      </div>
+      <div class="form-outline mb-4">
+        <button type="submit" class="btn btn-primary">Post</button>
+      </div>
+    </form>
+  </div>
+  <div class="row w-70">
+    <% @posts.each do |post| %>
+      <div class="g-mb-15">
+        <a href="posts/<%= post.id %>">
+          <h5 class="h5 g-color-gray-dark-v1 mb-0"><%= post.title %></h5>
+        </a>
+      </div>
+
+      <div class="row">
+        <p style="font-size: 20px"><%= post.content %></p>
+      </div>
+      <div class="row">
+        <form action="comments/create" accept-charset="UTF-8" method="post">
+          <input type="hidden" name="authenticity_token" value="...">
+          <input type="text" hidden="hidden" name="post_id" value="<%= post.id %>">
+          <div class="form-outline mb-4" style="width: 103%">
+            <textarea class="form-control" id="form4Example3" name="content" placeholder="Content" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">comment</button>
+        </form>
+        <div class="row">
+          <ul id="post-<%= post.id %>">
+            <% post.comments.each do |comment| %>
+              <a href="/comments/delete/<%= comment.id %>">
+                <li>
+                  <%= comment.content %>
+                </li>
+              </a>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+      <ul class="list-inline d-sm-flex my-0">
+        <li class="list-inline-item g-mr-20">
+          <a type="button" class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" onclick="hide(<%= post.id %>)">
+            show
+          </a>
+        </li>
+        <li class="list-inline-item g-mr-20">
+          <a type="button" class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" onclick="show(<%= post.id %>)">
+            edit
+          </a>
+        </li>
+        <li class="list-inline-item ml-auto">
+          <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="posts/delete/<%= post.id %>">
+            del
+          </a>
+        </li>
+      </ul>
+    <% end %>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    function hide(id) {
+        document.getElementById('post-' + id).style.display = 'none'
+    }
+
+    function show (id) {
+        document.getElementById('post-' + id).style.display = 'block'
+    }
+</script>
