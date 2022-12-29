@@ -16,6 +16,12 @@
         <textarea class="form-control" disabled id="form-edit" name="content" placeholder="Content" rows="4"><%= @post.content %></textarea>
       </div>
     </form>
+    <ul>
+      <li><%= link_to "delete", post_path(@post), data: {
+        turbo_method: :delete,
+        turbo_confirm: "Are you sure?"
+      } %></li>
+    </ul>
     <div class="row">
       <% @post.comments.each_with_index do |comment, index| %>
         <p><span class="text-danger">Tèo <%= index + 1 %></span> - <%= comment.content %></p>
