@@ -1,16 +1,30 @@
 class UsersController < ApplicationController
+
+  skip_before_action :authorized, only: [:new, :login, :accept, :create, :password_digest, :data]
+  skip_before_action :isAdminUser, only: [:new, :login, :accept, :create, :password_digest, :data, :logout]
   def new
+  end
+
+  def index
+    username = params[:name]
+    @users = username ? User.where(username: params[:name]) : User.all
+  end
+
+  def logout
+    session[:user_id] = nil
+    redirect_to '/login'
   end
   def login
 
   end
 
   def accept
-    @user = User.find_by(authenticate)
-    if @user
+    @user = User.find_by(username: params[:username])
+    if @user && @user.authenticate(params[:password])
+      session[:user_id] = @user.id
       redirect_to controller: 'posts', action: 'index'
     else
-      # redirect_ ''
+      redirect_to action: 'new'
     end
   end
   def create
@@ -26,14 +40,10 @@ class UsersController < ApplicationController
     end
   end
 
-  private
   def password_digest
     params[:password]
   end
   def data
-    params.permit(:email, :username, :password)
-  end
-  def authenticate
-    params.permit(:username, :password_digest)
+    params.permit(:email, :username, :password, :is_admin)
   end
 end

@@ -1,0 +1,11 @@
+<div class="container p-5">
+  <form accept-charset="UTF-8" method="get">
+    <input type="text" name="name">
+    <button type="submit">search</button>
+  </form>
+  <ul>
+    <% @users.each_with_index do |user, index| %>
+      <li><%= index + 1 %> - <%= user.username %></li>
+    <% end %>
+  </ul>
+</div>

@@ -13,7 +13,7 @@ default: &default
 development:
   <<: *default
   username: root
-  password: caongan@123
+  password: 11111
   database: blog
 
 # Warning: The database defined as "test" will be erased and

@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'comments/delete/:id', to: "comments#destroy"
   get "sing-up", to: "users#new"
   get "login", to: "users#login"
+  get "logout", to: "users#logout"
+  get "users", to: "users#index"
   post "login", to: "users#accept"
   post "user/create", to: "users#create"
 end

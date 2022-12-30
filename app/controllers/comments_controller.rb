@@ -1,10 +1,13 @@
 class CommentsController < ApplicationController
+  skip_before_action :isAdminUser
   def index
   end
 
   def destroy
     @comment = Comment.delete(params[:id])
-    redirect_back(fallback_location: '')
+    render json: {
+      message: "ok"
+    }
   end
   def create
     @comment = Comment.new(data)
@@ -15,6 +18,6 @@ class CommentsController < ApplicationController
 
   private
   def data
-    params.permit(:content, :post_id)
+    params.permit(:content, :post_id, :user_id)
   end
 end

@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
+  skip_before_action :isAdminUser
   def index
+    @user = User.find(session[:user_id])
     @posts = Post.order('id DESC')
   end
 
@@ -23,6 +25,7 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(data)
+    @post.image.attach(params[:image])
     if @post.save
       redirect_to action: 'index'
     end
@@ -30,6 +33,6 @@ class PostsController < ApplicationController
 
   private
   def data
-    params.permit(:title, :content)
+    params.permit(:title, :content, :user_id, :image)
   end
 end

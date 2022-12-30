@@ -3,7 +3,7 @@
     <form action="/post/update/<%= @post.id %>" accept-charset="UTF-8" method="post">
       <input type="hidden" name="authenticity_token" value="...">
       <div class="row mb-5">
-        <div class="col-md-9">
+        <div class="col-md-9" style="margin-left: -14px">
           <input type="text" id="title" name="title" value="<%= @post.title %>" class="form-control" disabled>
         </div>
         <div class="col-md-3">

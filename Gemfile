@@ -11,9 +11,12 @@ gem "sprockets-rails"
 
 # Use sqlite3 as the database for Active Record
 gem "mysql2"
-
+gem 'shrine', '~> 3.3'
+gem 'image_processing', '~> 1.12', '>= 1.12.1'
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
+gem 'attach', '~> 1.0.1'
+gem "font-awesome-sass", "~> 6.2.1"
 
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
