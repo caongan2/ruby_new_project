@@ -4,7 +4,7 @@
       <div class="col-12">
         <div class="card card-registration card-registration-2" style="border-radius: 15px;">
           <div class="card-body p-0">
-            <form action="/user/create" accept-charset="UTF-8" method="post">
+            <form action="/user/create" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
               <input type="hidden" name="authenticity_token" value="...">
               <div class="row g-0">
                 <div class="col-lg-2"></div>
@@ -35,6 +35,7 @@
                         <div class="form-outline">
                           <input type="password" name="password" placeholder="Password..." id="form3Examplev3" class="form-control form-control-lg" />
                         </div>
+                        <input type="file" name="avatar">
                         <button type="submit" name="commit" hidden="hidden"></button>
                       </div>
                     </div>

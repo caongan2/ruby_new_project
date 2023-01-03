@@ -1,38 +1,40 @@
-<div class="mt-5">
-  <div class="container p-5" style="border: solid 1px black">
-    <form action="/post/update/<%= @post.id %>" accept-charset="UTF-8" method="post">
-      <input type="hidden" name="authenticity_token" value="...">
-      <div class="row mb-5">
-        <div class="col-md-9" style="margin-left: -14px">
-          <input type="text" id="title" name="title" value="<%= @post.title %>" class="form-control" disabled>
-        </div>
-        <div class="col-md-3">
-          <a class="btn btn-secondary" id="btn-edit">edit</a>
-          <button class="btn btn-primary" type="submit" name="commit" style="display: none" id="btn-submit">update</button>
-          <a class="btn btn-secondary" style="display: none" id="btn-cancel">cancel</a>
-        </div>
+<div class="container p-5" style="padding: 6rem !important;">
+  <form action="/post/update/<%= @post.id %>" accept-charset="UTF-8" method="post">
+    <input type="hidden" name="authenticity_token" value="...">
+    <div class="row mb-5">
+      <div class="col-md-9" style="margin-left: -14px">
+        <input type="text" id="title" name="title" value="<%= @post.title %>" class="form-control" disabled>
       </div>
-      <div class="row mb-5">
-        <textarea class="form-control" disabled id="form-edit" name="content" placeholder="Content" rows="4"><%= @post.content %></textarea>
+      <div class="col-md-3">
+        <a class="btn btn-secondary" id="btn-edit">edit</a>
+        <button class="btn btn-primary" type="submit" name="commit" style="display: none" id="btn-submit">update</button>
+        <a class="btn btn-secondary" style="display: none" id="btn-cancel">cancel</a>
       </div>
-    </form>
-    <ul>
-      <li><%= link_to "delete", post_path(@post), data: {
-        turbo_method: :delete,
-        turbo_confirm: "Are you sure?"
-      } %></li>
-    </ul>
-    <div class="row">
-      <% @post.comments.each_with_index do |comment, index| %>
-        <p><span class="text-danger">Tèo <%= index + 1 %></span> - <%= comment.content %></p>
-      <% end %>
-      <form action="/comments/create" accept-charset="UTF-8" method="post">
-        <input type="hidden" name="authenticity_token" value="...">
-        <input type="text" name="content" placeholder="Comment..." class="form-control">
-        <input type="text" name="post_id" value="<%= @post.id %>" hidden="hidden" class="form-control">
-        <button type="submit" name="commit" hidden="hidden"></button>
-      </form>
     </div>
+    <div class="row mb-5">
+      <textarea class="form-control" disabled id="form-edit" name="content" placeholder="Content" rows="4"><%= @post.content %></textarea>
+    </div>
+  </form>
+  <ul>
+    <li><%= link_to "delete", post_path(@post), data: {
+      turbo_method: :delete,
+      turbo_confirm: "Are you sure?"
+    } %></li>
+  </ul>
+  <div class="row">
+    <% @post.comments.each_with_index do |comment, index| %>
+      <form action="">
+        <p id="cmt-<%= comment.id %>" style="color: dodgerblue"><span class="text-danger"><input type="checkbox" name="id"> - <%= comment.user.username unless comment.user.blank? %> </span> -
+          <a data-id="<%= comment.id %>" class="comment"><%= comment.content %></a></p>
+      </form>
+    <% end %>
+    <form action="/comments/create" accept-charset="UTF-8" method="post">
+      <input type="hidden" name="authenticity_token" value="...">
+      <input type="text" name="content" placeholder="Comment..." class="form-control">
+      <input type="text" name="post_id" value="<%= @post.id %>" hidden="hidden" class="form-control">
+      <input type="text" name="user_id" value="<%= @user.id %>" hidden="hidden" class="form-control">
+      <button type="submit" name="commit" hidden="hidden"></button>
+    </form>
   </div>
 </div>
 <script type="text/javascript" charset="utf-8">
@@ -51,5 +53,14 @@
           $("#form-edit").prop('disabled', true);
           $('#title').prop("disabled", true)
       })
+        $('.comment').on('click', function () {
+            let id = $(this).attr('data-id')
+            let url = location.origin + '/comments/delete/' + id
+            console.log(url)
+            $.get(url, function(e) {
+                $('#cmt-' + id).remove()
+                console.log(e)
+            })
+        })
   })
 </script>

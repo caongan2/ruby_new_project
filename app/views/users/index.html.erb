@@ -1,11 +1,55 @@
-<div class="container p-5">
-  <form accept-charset="UTF-8" method="get">
-    <input type="text" name="name">
-    <button type="submit">search</button>
-  </form>
-  <ul>
-    <% @users.each_with_index do |user, index| %>
-      <li><%= index + 1 %> - <%= user.username %></li>
-    <% end %>
-  </ul>
+<div class="container p-5" style="padding: 6rem !important;">
+  <div class="row p-5">
+    <form accept-charset="UTF-8" method="get">
+      <input type="text" class="form-control" name="name">
+      <button type="submit" hidden="hidden">search</button>
+    </form>
+  </div>
+  <div class="row">
+    <ul class="list-group">
+        <input type="hidden" name="authenticity_token" value="...">
+        <li class="list-group-item"><input type="checkbox" id="checkedAll"></li>
+        <% @users. each do |user| %>
+          <li class="list-group-item" id="item-<%= user.id %>"><input type="checkbox" class="checkItem" value="<%= user.id %>"> - <%= user.username %></li>
+        <% end %>
+        <button type="button" id="btn-delete" class="btn btn-danger">Delete</button>
+    </ul>
+  </div>
 </div>
+<script type="text/javascript" charset="utf-8">
+  $(function () {
+      $('#checkedAll').change(function () {
+          $(':checkbox.checkItem').prop('checked', this.checked);
+      })
+      $('#btn-delete').on('click', function () {
+          var ids = [];
+          var url = location.origin + '/users/delete'
+          $(':checkbox:checked').each(function(i){
+              ids[i] = $(this).val();
+          });
+          ids.shift()
+          $.ajax({
+              url: url,
+              type: "POST",
+              dataType: "JSON",
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              data: {
+                  ids: ids
+              },
+              success: function (e) {
+                  console.log(e);
+                  for (let i = 0; i <= ids.length; i++) {
+                      $("#item-" + ids[i]).remove()
+                  }
+              },
+              error: function (e) {
+                  console.log(ids)
+
+              }
+          })
+      })
+
+  })
+</script>

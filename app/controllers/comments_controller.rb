@@ -6,7 +6,7 @@ class CommentsController < ApplicationController
   def destroy
     @comment = Comment.delete(params[:id])
     render json: {
-      message: "ok"
+      message: "delete cmt #{params[:id]} success"
     }
   end
   def create

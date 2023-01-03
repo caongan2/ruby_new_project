@@ -1,8 +1,31 @@
 class UsersController < ApplicationController
 
   skip_before_action :authorized, only: [:new, :login, :accept, :create, :password_digest, :data]
-  skip_before_action :isAdminUser, only: [:new, :login, :accept, :create, :password_digest, :data, :logout]
+  skip_before_action :isAdminUser, only: [:new, :login, :accept, :create, :password_digest, :data, :logout, :show]
   def new
+  end
+
+  def destroy_selected
+    if params[:ids]
+      User.where(id: params[:ids]).destroy_all
+    end
+    redirect_back(fallback_location: '')
+  end
+  def show
+    @auth = current_user
+    @user = User.find(params[:id])
+    @posts = Post.where(user_id: @user.id)
+  end
+
+  def delete
+    @ids = params[:ids]
+
+    if @ids
+      User.where(id: @ids).destroy_all
+      render json: {
+        message: 'delete success'
+      }
+    end
   end
 
   def index
@@ -44,6 +67,6 @@ class UsersController < ApplicationController
     params[:password]
   end
   def data
-    params.permit(:email, :username, :password, :is_admin)
+    params.permit(:email, :username, :password, :is_admin, :avatar)
   end
 end

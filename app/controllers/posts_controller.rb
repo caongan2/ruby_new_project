@@ -1,11 +1,13 @@
 class PostsController < ApplicationController
   skip_before_action :isAdminUser
   def index
+    @users = User.all
     @user = User.find(session[:user_id])
     @posts = Post.order('id DESC')
   end
 
   def show
+    @user = User.find(session[:user_id])
     @post = Post.find(params[:id])
   end
 
