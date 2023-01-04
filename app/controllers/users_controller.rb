@@ -14,7 +14,7 @@ class UsersController < ApplicationController
   def show
     @auth = current_user
     @user = User.find(params[:id])
-    @posts = Post.where(user_id: @user.id)
+    @posts = @user.posts
   end
 
   def delete
@@ -23,7 +23,8 @@ class UsersController < ApplicationController
     if @ids
       User.where(id: @ids).destroy_all
       render json: {
-        message: 'delete success'
+        message: 'delete success',
+        data: @ids
       }
     end
   end
@@ -31,6 +32,7 @@ class UsersController < ApplicationController
   def index
     username = params[:name]
     @users = username ? User.where(username: params[:name]) : User.all
+    @pagy, @users = pagy(@users, items: 10)
   end
 
   def logout

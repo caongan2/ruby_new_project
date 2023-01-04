@@ -5,15 +5,20 @@
       <button type="submit" hidden="hidden">search</button>
     </form>
   </div>
-  <div class="row">
+  <div class="row md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
     <ul class="list-group">
         <input type="hidden" name="authenticity_token" value="...">
         <li class="list-group-item"><input type="checkbox" id="checkedAll"></li>
         <% @users. each do |user| %>
           <li class="list-group-item" id="item-<%= user.id %>"><input type="checkbox" class="checkItem" value="<%= user.id %>"> - <%= user.username %></li>
         <% end %>
-        <button type="button" id="btn-delete" class="btn btn-danger">Delete</button>
     </ul>
+    <button type="button" id="btn-delete" class="btn btn-danger">Delete</button>
+    <div class="flex mt-12 items-center justify-center space-x-4 w-full">
+      <%== pagy_nav(@pagy) %>
+    </div>
+    <p class="text-center mt-8 text-gray-500"><%== pagy_info @pagy %></p>
+
   </div>
 </div>
 <script type="text/javascript" charset="utf-8">
@@ -24,10 +29,9 @@
       $('#btn-delete').on('click', function () {
           var ids = [];
           var url = location.origin + '/users/delete'
-          $(':checkbox:checked').each(function(i){
+          $('.checkItem:checked').each(function(i){
               ids[i] = $(this).val();
           });
-          ids.shift()
           $.ajax({
               url: url,
               type: "POST",

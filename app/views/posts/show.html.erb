@@ -1,26 +1,45 @@
 <div class="container p-5" style="padding: 6rem !important;">
-  <form action="/post/update/<%= @post.id %>" accept-charset="UTF-8" method="post">
+  <form action="/post/update/<%= @post.id %>" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
     <input type="hidden" name="authenticity_token" value="...">
     <div class="row mb-5">
       <div class="col-md-9" style="margin-left: -14px">
         <input type="text" id="title" name="title" value="<%= @post.title %>" class="form-control" disabled>
       </div>
+      <% if @post.user.id == @auth.id %>
       <div class="col-md-3">
         <a class="btn btn-secondary" id="btn-edit">edit</a>
         <button class="btn btn-primary" type="submit" name="commit" style="display: none" id="btn-submit">update</button>
         <a class="btn btn-secondary" style="display: none" id="btn-cancel">cancel</a>
+        <%= link_to "delete", post_path(@post), data: {
+          turbo_method: :delete,
+          turbo_confirm: "Are you sure?"
+        }, class: "btn btn-danger" %>
       </div>
+        <% end %>
     </div>
     <div class="row mb-5">
       <textarea class="form-control" disabled id="form-edit" name="content" placeholder="Content" rows="4"><%= @post.content %></textarea>
     </div>
+    <div class="row mb-5">
+      <div class="col-ld-5">
+        <label for="upload-photo" id="label" style="display: none">Choose image...</label>
+      </div>
+      <div class="col-ld-1">
+        <button type="button" id="btn-drop-image" style="display: none" class="text-danger">x</button>
+      </div>
+      <div class="col-ld-6">
+        <div id="img-prev">
+          <img src="" id="img-preview" alt="" style="width: 40%">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <%= image_tag @post.image unless @post.image.blank? %>
+    </div>
+    <div class="row mb-5">
+      <input type="file" name="image" id="upload-photo">
+    </div>
   </form>
-  <ul>
-    <li><%= link_to "delete", post_path(@post), data: {
-      turbo_method: :delete,
-      turbo_confirm: "Are you sure?"
-    } %></li>
-  </ul>
   <div class="row">
     <% @post.comments.each_with_index do |comment, index| %>
       <form action="">
@@ -37,10 +56,41 @@
     </form>
   </div>
 </div>
+<style>
+    label {
+        cursor: pointer;
+        /* Style as you please, it will become the visible UI component. */
+    }
+
+    #upload-photo {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+    }
+</style>
 <script type="text/javascript" charset="utf-8">
+    const input = document.getElementById('upload-photo');
+    const image = document.getElementById('img-preview');
+    const btn = document.getElementById('btn-drop-image');
+
+    input.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            const src = URL.createObjectURL(e.target.files[0]);
+            image.src = src;
+            btn.style.display = 'block'
+        }
+    });
+
+    $("#btn-drop-image").on('click', function () {
+        image.src = ''
+        btn.style.display = 'none'
+        $("#upload-photo").val('')
+    })
+
     $(function() {
       $("#btn-edit").on('click', function () {
           $('#btn-cancel').show()
+          $('#label').show()
           $('#btn-submit').show()
           $('#btn-edit').hide()
           $("#form-edit").prop('disabled', false);
@@ -48,6 +98,7 @@
       })
       $('#btn-cancel').on('click', function () {
           $('#btn-cancel').hide()
+          $('#label').hide()
           $('#btn-submit').hide()
           $('#btn-edit').show()
           $("#form-edit").prop('disabled', true);

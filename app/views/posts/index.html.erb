@@ -1,6 +1,6 @@
 <div class="container p-5">
   <div class="row p-5">
-    <div class="col-md-10">
+    <div class="col-md-9">
       <div class="row w-70">
         <form action="/posts" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
           <input type="hidden" name="authenticity_token" value="...">
@@ -13,8 +13,20 @@
             <textarea class="form-control" id="form4Example3" name="content" placeholder="Content" rows="4"></textarea>
           </div>
           <div class="form-outline mb-4">
-            <input type="file" name="image">
+            <label class="btn btn-success" for="upload-photo" id="label">Choose image...</label>
+            <input type="file" id="upload-photo" name="image">
           </div>
+          <style>
+              label {
+                  cursor: pointer;
+              }
+
+              #upload-photo {
+                  opacity: 0;
+                  position: absolute;
+                  z-index: -1;
+              }
+          </style>
           <div class="form-outline mb-4">
             <button type="submit" class="btn btn-primary">Post</button>
           </div>
@@ -22,65 +34,77 @@
       </div>
       <div class="row w-70">
         <% @posts.each do |post| %>
-          <div class="g-mb-15">
-            <a href="posts/<%= post.id %>">
-              <h5 class="h5 g-color-gray-dark-v1 mb-0"><%= post.title %> - <span class="text-success"><%= post.user_username %></span></h5>
-            </a>
-          </div>
-
-          <div class="row mb-5">
-            <p style="font-size: 20px"><%= post.content %></p>
-          </div>
-          <div class="row mb-2">
-            <%= image_tag post.image %>
-          </div>
-          <div class="row">
-            <div class="col-lg-2">
-              <p>
-                <span class="text-danger"><%= post.comments.count %></span> - comments
-              </p>
+          <div id="post-<%= post.id %>">
+            <div class="row">
+              <div class="col-md-10">
+                <div class="g-mb-15">
+                  <a href="posts/<%= post.id %>">
+                    <h5 class="h5 g-color-gray-dark-v1 mb-0"><%= post.title %> - <span class="text-success"><%= post.user_username %></span></h5>
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <% if @auth.id == post.user.id %>
+                  <a data-id="<%= post.id %>" class="dlt-post">Delete</a>
+                <% end %>
+              </div>
             </div>
-            <div class="col-lg-3">
-              <ul class="list-inline d-sm-flex my-0">
-                <li class="list-inline-item g-mr-20">
-                  <a type="button" class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" onclick="hide(<%= post.id %>)">
-                    hide
-                  </a>
-                </li>
-                <li class="list-inline-item g-mr-20">
-                  <a type="button" class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" onclick="show(<%= post.id %>)">
-                    show
-                  </a>
-                </li>
-                <li class="list-inline-item ml-auto">
-                  <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="posts/delete/<%= post.id %>">
-                    del
-                  </a>
-                </li>
+
+            <div class="row mb-5">
+              <p style="font-size: 20px"><%= post.content %></p>
+            </div>
+            <div class="row mb-2">
+              <%= image_tag post.image unless post.image.blank? %>
+            </div>
+            <div class="row">
+              <div class="col-lg-2">
+                <p>
+                  <span class="text-danger"><%= post.comments.count %></span> - comments
+                </p>
+              </div>
+              <div class="col-lg-3">
+                <ul class="list-inline d-sm-flex my-0">
+                  <li class="list-inline-item g-mr-20">
+                    <a type="button" class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" onclick="hide(<%= post.id %>)">
+                      hide
+                    </a>
+                  </li>
+                  <li class="list-inline-item g-mr-20">
+                    <a type="button" class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" onclick="show(<%= post.id %>)">
+                      show
+                    </a>
+                  </li>
+                  <li class="list-inline-item ml-auto">
+                    <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="posts/delete/<%= post.id %>">
+                      del
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+            <div class="row">
+              <ul id="menu"></ul>
+              <ul id="ul-post-<%= post.id %>" style="margin-left: 2%;">
+                <% post.comments.each do |comment| %>
+                  <li id="cmt-<%= comment.id %>">
+                    <span class="text-danger"><%= comment.user.username unless comment.user.blank? %></span> - <%= comment.content %> -
+                    <a class="btn delete-cmt" data-id="<%= comment.id %>">Del</a>
+                  </li>
+                <% end %>
               </ul>
             </div>
-
-          </div>
-          <div class="row">
-            <ul id="post-<%= post.id %>" style="margin-left: 2%;">
-              <% post.comments.each do |comment| %>
-                <li id="cmt-<%= comment.id %>">
-                  <span class="text-danger"><%= comment.user.username unless comment.user.blank? %></span> - <%= comment.content %> -
-                  <a class="btn delete-cmt" data-id="<%= comment.id %>">Del</a>
-                </li>
-              <% end %>
-            </ul>
-          </div>
-          <div class="row mb-5">
-            <form action="comments/create" id="form-data" accept-charset="UTF-8" method="post">
-              <input type="hidden" name="authenticity_token" value="...">
-              <input type="number" hidden="hidden" name="user_id" value="<%= @user.id %>">
-              <input type="text" hidden="hidden" name="post_id" value="<%= post.id %>">
-              <div class="form-outline mb-4" style="width: 103%">
-                <textarea class="form-control" id="form4Example3" name="content" placeholder="Comment..." rows="3"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">comment</button>
-            </form>
+            <div class="row mb-5">
+<!--              <form action="comments/create" id="form-data" accept-charset="UTF-8" method="post">-->
+                <input type="hidden" name="authenticity_token" value="...">
+                <input type="number" hidden="hidden" name="user_id" value="<%= @user.id %>">
+                <input type="text" hidden="hidden" name="post_id" value="<%= post.id %>">
+                <div class="form-outline mb-4" style="width: 103%">
+                  <textarea class="form-control" id="cmt-post-<%= post.id %>" name="content" placeholder="Comment..." rows="3"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary btn-comment" post-id="<%= post.id %>">comment</button>
+<!--              </form>-->
+            </div>
           </div>
         <% end %>
       </div>
@@ -137,8 +161,25 @@
         document.getElementById('post-' + id).style.display = 'block'
     }
 
+    function deleteComment(id) {
+        let url = location.origin + '/comments/delete/' + id
+        $.ajax({
+            type: "GET",
+            dataType: "JSON",
+            url: url,
+            success: function (e) {
+                $(".cmt-" + id).remove()
+                console.log(e)
+            },
+            error: function (e) {
+                console.log(e)
+            }
+        })
+    }
+
 
     $(document).ready(function () {
+        let old_cmt = `<%= Comment.last.id %>`
         $('.delete-cmt').on('click', function () {
             let id = $(this).attr('data-id')
             let url = location.origin + '/comments/delete/' + id
@@ -147,5 +188,46 @@
                 console.log(e)
             });
         })
+
+        $(".dlt-post").on('click', function () {
+            let id = $(this).attr('data-id')
+            let url = location.origin + '/posts/delete/' + id
+            $.get(url, function (e){
+                $("#post-" + id).remove()
+            })
+        })
+
+        $(".btn-comment").on('click', function () {
+            old_cmt = Number(old_cmt) + 1
+            let post_id = $(this).attr('post-id')
+            let auth_id = `<%= @auth.id %>`
+            let auth_username = `<%= @auth.username %>`
+            let comment = $("#cmt-post-" + post_id).val()
+            $("#ul-post-" + post_id).append('<li class="cmt-'+ old_cmt +'">' + '<span class="text-danger">' + auth_username + ' - ' + '</span>' + comment + ' - ' + '<a class="btn delete-cmt" onclick="deleteComment('+ old_cmt +')">Del</a>'  + '</li>')
+            console.log(auth_id, post_id, auth_username, old_cmt);
+            let url = location.origin + '/comments/create'
+            $.ajax({
+                type: "POST",
+                dataType: 'JSON',
+                url: url,
+                data: {
+                    post_id: post_id,
+                    user_id: auth_id,
+                    content: comment,
+                    authenticity_token: '...'
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (e) {
+                    console.log(old_cmt)
+                    $("#cmt-post-" + post_id).val('')
+                },
+                error: function (e) {
+                    console.log(e)
+                }
+            })
+        })
+
     })
 </script>

@@ -1,21 +1,26 @@
 class PostsController < ApplicationController
   skip_before_action :isAdminUser
   def index
+    @auth = current_user
     @users = User.all
     @user = User.find(session[:user_id])
     @posts = Post.order('id DESC')
   end
 
   def show
+    @auth = current_user
     @user = User.find(session[:user_id])
     @post = Post.find(params[:id])
+    @image = @post.image
   end
 
   def update
     @post = Post.find(params[:id])
-    if @post.update(data)
-      redirect_to @post
+    @post.update(data)
+    if params[:image]
+      @post.image.attach(params[:image])
     end
+    redirect_to @post
   end
 
   def destroy

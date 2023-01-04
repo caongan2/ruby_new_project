@@ -12,7 +12,9 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new(data)
     if @comment.save
-      redirect_back(fallback_location: '')
+      render json: {
+        message: "add comment success"
+      }
     end
   end
 

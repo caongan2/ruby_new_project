@@ -11,7 +11,7 @@
         <p style="font-size: 20px"><%= post.content %></p>
       </div>
       <div class="row mb-2">
-        <%= image_tag post.image, style: "border-radius: 50%" %>
+        <%= image_tag post.image unless post.image.blank? %>
       </div>
       <div class="row">
         <div class="col-lg-2">
