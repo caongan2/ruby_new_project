@@ -17,6 +17,7 @@ gem 'image_processing', '~> 1.12', '>= 1.12.1'
 gem "puma", "~> 5.0"
 gem 'attach', '~> 1.0.1'
 gem "font-awesome-sass", "~> 6.2.1"
+gem "font-awesome-sass", "~> 6.2.1"
 
 gem "pagy"
 

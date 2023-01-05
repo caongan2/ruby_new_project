@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   skip_before_action :authorized, only: [:new, :login, :accept, :create, :password_digest, :data]
   skip_before_action :isAdminUser, only: [:new, :login, :accept, :create, :password_digest, :data, :logout, :show]
   def new
+    render layout: "test"
   end
 
   def destroy_selected
@@ -40,7 +41,7 @@ class UsersController < ApplicationController
     redirect_to '/login'
   end
   def login
-
+    render layout: "test"
   end
 
   def accept
